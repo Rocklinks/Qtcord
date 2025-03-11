@@ -1,5 +1,23 @@
+import json
+import os
 import re
 from discord_integration import get_user_from_id  # Ensure this module is accessible
+
+# Load emoji.json file dynamically
+EMOJI_FILE = os.path.join(os.path.dirname(__file__), "emoji.json")
+
+with open(EMOJI_FILE, "r", encoding="utf-8") as file:
+    EMOJI_MAP = json.load(file)
+
+def convert_discord_emojis(content):
+    """
+    Converts Discord emoji shortcodes like :smile: into Unicode emojis.
+    """
+    def replace_match(match):
+        emoji_name = match.group(1)
+        return EMOJI_MAP.get(emoji_name, match.group(0))  # Replace if found, else keep original text
+
+    return re.sub(r":([a-zA-Z0-9_+-]+):", replace_match, content)
 
 def process_message_content(content):
     """
@@ -21,134 +39,6 @@ def process_message_content(content):
 
     # Convert emojis
     content = convert_discord_emojis(content)
-
-    return content
-
-def convert_discord_emojis(content):
-    """
-    Converts Discord emoji shortcodes like :smile: into Unicode emojis.
-    """
-    emoji_dict = {
-        "smile": "😄",
-        "heart": "❤️",
-        "thumbsup": "👍",
-        "fire": "🔥",
-        "100": "💯",
-        "clap": "👏",
-        "thinking": "🤔",
-        "laugh": "😂",
-        "cry": "😢",
-        "grin": "😁",
-        "angry": "😠",
-        "surprised": "😲",
-        "cool": "😎",
-        "sweat": "😅",
-        "joy": "🤣",
-        "sad": "😞",
-        "wink": "😉",
-        "star": "⭐",
-        "check": "✔️",
-        "cross": "❌",
-        "question": "❓",
-        "exclamation": "❗",
-        "wave": "👋",
-        "pray": "🙏",
-        "ok": "👌",
-        "eyes": "👀",
-        "rocket": "🚀",
-        "tada": "🎉",
-        "party": "🥳",
-        "gift": "🎁",
-        "facepalm": "🤦",
-        "shrug": "🤷",
-        "skull": "💀",
-        "poop": "💩",
-        "robot": "🤖",
-        "alien": "👽",
-        "ghost": "👻",
-        "money": "🤑",
-        "zany": "🤪",
-        "nerd": "🤓",
-        "smirk": "😏",
-        "hug": "🤗",
-        "love": "😍",
-        "sleepy": "😴",
-        "yawn": "🥱",
-        "pensive": "😔",
-        "confused": "😕",
-        "neutral": "😐",
-        "zipper": "🤐",
-        "nauseated": "🤢",
-        "mask": "😷",
-        "scream": "😱",
-        "dizzy": "😵",
-        "relieved": "😌",
-        "halo": "😇",
-        "devil": "😈",
-        "clown": "🤡",
-        "muscle": "💪",
-        "coffee": "☕",
-        "pizza": "🍕",
-        "cake": "🍰",
-        "chocolate": "🍫",
-        "apple": "🍎",
-        "banana": "🍌",
-        "carrot": "🥕",
-        "burger": "🍔",
-        "fries": "🍟",
-        "hotdog": "🌭",
-        "beers": "🍻",
-        "wine": "🍷",
-        "cheers": "🥂",
-        "soccer": "⚽",
-        "basketball": "🏀",
-        "football": "🏈",
-        "tennis": "🎾",
-        "bowling": "🎳",
-        "bike": "🚴",
-        "train": "🚆",
-        "car": "🚗",
-        "airplane": "✈️",
-        "globe": "🌍",
-        "sun": "☀️",
-        "moon": "🌙",
-        "rainbow": "🌈",
-        "snowflake": "❄️",
-        "fireworks": "🎆",
-        "medal": "🏅",
-        "trophy": "🏆",
-        "flag": "🚩",
-        "hourglass": "⌛",
-        "lightbulb": "💡",
-        "bell": "🔔",
-        "megaphone": "📣",
-        "bomb": "💣",
-        "moneybag": "💰",
-        "credit": "💳",
-        "email": "✉️",
-        "link": "🔗",
-        "pen": "🖊️",
-        "book": "📖",
-        "radio": "📻",
-        "tv": "📺",
-        "camera": "📷",
-        "video": "🎥",
-        "headphones": "🎧",
-        "cd": "💿",
-        "key": "🔑",
-        "lock": "🔒",
-        "unlock": "🔓",
-        "clipboard": "📋",
-        "paperclip": "📎",
-        "bar_chart": "📊",
-        "notepad": "🗒️",
-        "newspaper": "📰",
-        "calendar": "📅",
-        "hourglass_done": "⏳",
-    }
-
-    for shortcode, emoji_unicode in emoji_dict.items():
-        content = content.replace(f":{shortcode}:", emoji_unicode)
 
     return content
 
